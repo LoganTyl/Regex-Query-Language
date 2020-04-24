@@ -26,8 +26,11 @@ public class CreateStatement {
             System.out.println("CREATE TABLE 'table' (arg1,arg2,arg3):");
             System.out.println("line format /<regex with column name in its own regex group>/:");
             System.out.println("file 'filepath';\n");
-            System.out.println("Enter your query:");
+            System.out.println("Enter your query OR type 'Quit' to go back to the menu:");
             createPart1 = reader.readLine();
+            if(createPart1.equalsIgnoreCase("Quit")){
+                break;
+            }
             createPart2 = reader.readLine();
             createPart3 = reader.readLine();
             validQuery = isQueryRegexValid(createPart1, createPart2, createPart3);
@@ -94,7 +97,7 @@ public class CreateStatement {
             }
         }
         if(uniqueTableName(tableName)){
-            createTableFile(lineFormatRegex, args, matches, filepath, tableName);
+            createTableFile(lineFormatRegex, args, matches, tableName);
             return true;
         }
         else{
@@ -103,13 +106,13 @@ public class CreateStatement {
         }
     }
 
-    private void createTableFile(String completeRegex, String[] columnNames, String[] columnRegexes, String filepath, String tableName) throws IOException {
+    private void createTableFile(String completeRegex, String[] columnNames, String[] columnRegexes, String tableName) throws IOException {
         File tableFile = new File(tableName + ".txt");
         if (!tableFile.createNewFile()) {
             System.out.println("A table with this name already exists");
         } else {
             FileWriter writer = new FileWriter(tableFile + ".txt");
-            writer.write(filepath);
+            writer.write(tableFile.getAbsolutePath());
             writer.write(completeRegex);
             for(int i=0; i<columnNames.length; i++){
                 writer.write(columnNames[i] + " | " + columnRegexes[i]);
