@@ -1,8 +1,6 @@
 package edu.neumont.csc180.tyler.logan;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +34,7 @@ public class CreateStatement {
         }
     }
 
-    private boolean isQueryRegexValid(String part1, String part2, String part3){
+    private boolean isQueryRegexValid(String part1, String part2, String part3) throws IOException {
         if(Pattern.matches(csRegex.getCreatePart1Regex(),part1)){
             if(Pattern.matches(csRegex.getCreatePart2Regex(), part2)){
                 if(Pattern.matches(csRegex.getCreatePart3Regex(),part3)){
@@ -61,12 +59,14 @@ public class CreateStatement {
         }
     }
 
-    private boolean isQueryPartsValid(String part1, String part2, String part3){
+    private boolean isQueryPartsValid(String part1, String part2, String part3) throws IOException {
         String[] args = part1.split(",");
+        String tableName = part1.replace("CREATE TABLE '", "");
+        tableName = tableName.substring(0, tableName.indexOf("'"));
         String lineFormatRegex = part2.replace("line format /","");
         lineFormatRegex.concat("///////");
         lineFormatRegex = part2.replace("/:///////","");
-        String[] matches = Pattern.compile("\\((([^()]*+)(?:(/?R)(/?2))*)\\)")
+        String[] matches = Pattern.compile(csRegex.getGroupingRegex())
                 .matcher(part2)
                 .results()
                 .map(MatchResult::group)
@@ -85,7 +85,46 @@ public class CreateStatement {
             System.out.println("Given file does not exist. Please make sure file path is correct.\n");
             return false;
         }
-        //check each line of file meets regex
-        //create ref file in tables dir
+        BufferedReader fileReader = new BufferedReader(new FileReader(filepath));
+        String fileLine = null;
+        while((fileLine = fileReader.readLine()) != null){
+            if(!Pattern.matches(lineFormatRegex, fileLine)){
+                System.out.println("A line in the file does not match the provided regex.");
+                return false;
+            }
+        }
+        if(uniqueTableName(tableName)){
+            createTableFile(lineFormatRegex, args, matches, filepath, tableName);
+            return true;
+        }
+        else{
+            System.out.println("A table with this name already exists");
+            return false;
+        }
+    }
+
+    private void createTableFile(String completeRegex, String[] columnNames, String[] columnRegexes, String filepath, String tableName) throws IOException {
+        File tableFile = new File(tableName + ".txt");
+        if (!tableFile.createNewFile()) {
+            System.out.println("A table with this name already exists");
+        } else {
+            FileWriter writer = new FileWriter(tableFile + ".txt");
+            writer.write(filepath);
+            writer.write(completeRegex);
+            for(int i=0; i<columnNames.length; i++){
+                writer.write(columnNames[i] + " | " + columnRegexes[i]);
+            }
+            writer.close();
+        }
+    }
+
+    private boolean uniqueTableName(String tableName){
+        File[] tables = new File("tables/").listFiles();
+        for(File table: tables){
+            if(table.getName().equals(tableName + ".txt")){
+                return false;
+            }
+        }
+        return true;
     }
 }
