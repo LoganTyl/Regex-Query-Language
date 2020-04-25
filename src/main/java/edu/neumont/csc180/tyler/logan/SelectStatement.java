@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -25,21 +26,21 @@ public class SelectStatement {
             System.out.println("WHERE col2 [>= OR > OR = OR < OR <=] 'value';");
             System.out.println("*Note: WHERE statement is optional. If not needed, put semicolon at the end of FROM statement instead");
             System.out.println("Enter your query OR type 'Quit' to go back to the menu:");
-//            selectPart1 = reader.nextLine();
-//            if(selectPart1.equalsIgnoreCase("Quit")){
-//                break;
-//            }
-//            selectPart2 = reader.nextLine();
-//            if(selectPart2.charAt(selectPart2.length()-1) != ";"){
-////            selectPart3 = reader.nextLine();
-//            }
-//            else{
-//                selectPart3 = "";
-//            }
-            String filler = reader.nextLine();
-            selectPart1 = "SELECT col";
-            selectPart2 = "FROM testTable1";
-            selectPart3 = "WHERE name = 'LoganTyler';";
+            selectPart1 = reader.nextLine();
+            if(selectPart1.equalsIgnoreCase("Quit")){
+                break;
+            }
+            selectPart2 = reader.nextLine();
+            if(selectPart2.charAt(selectPart2.length()-1) != ';'){
+                selectPart3 = reader.nextLine();
+            }
+            else{
+                selectPart3 = "";
+            }
+//            String filler = reader.nextLine();
+//            selectPart1 = "SELECT col";
+//            selectPart2 = "FROM testTable1";
+//            selectPart3 = "WHERE name = 'LoganTyler';";
             validQuery = isQueryRegexValid(selectPart1, selectPart2, selectPart3);
         }
     }
@@ -75,7 +76,6 @@ public class SelectStatement {
 
     private boolean isQueryPartsValid(String part1, String part2, String part3) throws IOException {
         String tableName = "tables/" + part2.substring(5) + ".txt";
-        System.out.println(tableName);
         Path tablePath  = Paths.get(tableName);
         if(!(Files.exists(tablePath) && Files.isRegularFile(tablePath))){ //check for file in tables dir
             System.out.println("Table reference does not exist or has been altered.\n");
@@ -107,8 +107,6 @@ public class SelectStatement {
             inputtedColumns.add(extraCol); //last column will be WHERE column if part3 is not empty
         }
         if(!colListInFile.containsAll(inputtedColumns)){
-            System.out.println(colListInFile);
-            System.out.println(inputtedColumns);
             System.out.println("One or more columns inputted do not exist in the table.");
             return false;
         }
@@ -130,7 +128,7 @@ public class SelectStatement {
                 int indexOfWhere =  colListInFile.indexOf(whereColumn);
                 String[] dataColumns = fileLine.split(";");
                 String[] partsOfQuery = part3.split(" ");
-                String value = partsOfQuery[3].substring(1, partsOfQuery[3].length() - 1);
+                String value = partsOfQuery[3].substring(1, partsOfQuery[3].length() - 2);
                 String operator = partsOfQuery[2];
                 switch(operator){
                     case "<=":
@@ -161,11 +159,11 @@ public class SelectStatement {
                     default:
                         System.out.println("Invalid operator");
                 }
-            String[] dataColumnsForQuery = fileLine.split(";");
-            for(int i=0;i<inputtedColumns.size()-1;i++){
-                String data = dataColumnsForQuery[Integer.parseInt(colListInFile.get(colListInFile.indexOf(inputtedColumns.get(i))))];
-                System.out.print(String.format("%-25s", data));
-            }
+                String[] dataColumnsForQuery = fileLine.split(";");
+                for(int i=0;i<inputtedColumns.size()-1;i++){
+                    String data = dataColumnsForQuery[i];
+                    System.out.print(String.format("%-25s", data));
+                }
                 System.out.println("");
             }
         }

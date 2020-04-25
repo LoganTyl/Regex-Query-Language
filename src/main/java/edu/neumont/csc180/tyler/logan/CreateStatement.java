@@ -24,16 +24,16 @@ public class CreateStatement {
             System.out.println("line format /regex with column name in its own regex group; separated by semicolons/:");
             System.out.println("file 'filepath';\n");
             System.out.println("Enter your query OR type 'Quit' to go back to the menu:");
-//            createPart1 = reader.nextLine();
-//            if(createPart1.equalsIgnoreCase("Quit")){
-//                break;
-//            }
-//            createPart2 = reader.nextLine();
-//            createPart3 = reader.nextLine();
-            String filler = reader.nextLine();
-            createPart1 = "CREATE TABLE 'testTable1' (name,col):";
-            createPart2 = "line format /([A-Z][a-zA-Z]*);([a-zA-Z0-9]+)/:";
-            createPart3 = "file 'C:\\Users\\Logan Tyler\\Desktop\\Classes\\Quarter 7\\Open Source Platforms Dev\\Regex Query Language\\testFiles\\1.txt';";
+            createPart1 = reader.nextLine();
+            if(createPart1.equalsIgnoreCase("Quit")){
+                break;
+            }
+            createPart2 = reader.nextLine();
+            createPart3 = reader.nextLine();
+//            String filler = reader.nextLine();
+//            createPart1 = "CREATE TABLE 'testTable1' (name,col):";
+//            createPart2 = "line format /([A-Z][a-zA-Z]*);([a-zA-Z0-9]+)/:";
+//            createPart3 = "file 'C:\\Users\\Logan Tyler\\Desktop\\Classes\\Quarter 7\\Open Source Platforms Dev\\Regex Query Language\\testFiles\\1.txt';";
             validQuery = isQueryRegexValid(createPart1, createPart2, createPart3);
         }
     }
