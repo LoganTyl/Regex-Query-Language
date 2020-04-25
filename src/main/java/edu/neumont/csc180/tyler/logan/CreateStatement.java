@@ -4,11 +4,14 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 public class CreateStatement {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+//    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    Scanner reader = new Scanner(System.in);
     CreateStatementRegex csRegex = new CreateStatementRegex();
     String createStatement;
     String createPart1;
@@ -27,12 +30,16 @@ public class CreateStatement {
             System.out.println("line format /<regex with column name in its own regex group>/:");
             System.out.println("file 'filepath';\n");
             System.out.println("Enter your query OR type 'Quit' to go back to the menu:");
-            createPart1 = reader.readLine();
-            if(createPart1.equalsIgnoreCase("Quit")){
-                break;
-            }
-            createPart2 = reader.readLine();
-            createPart3 = reader.readLine();
+//            createPart1 = reader.nextLine();
+//            if(createPart1.equalsIgnoreCase("Quit")){
+//                break;
+//            }
+//            createPart2 = reader.nextLine();
+//            createPart3 = reader.nextLine();
+            String filler = reader.nextLine();
+            createPart1 = "CREATE TABLE 'testTable1' (name,col):";
+            createPart2 = "line format /([A-Z][a-zA-Z]*) - ([a-zA-Z0-9]+)/:";
+            createPart3 = "file 'C:\\Users\\Logan Tyler\\Desktop\\Classes\\Quarter 7\\Open Source Platforms Dev\\Regex Query Language\\testFiles\\1.txt';";
             validQuery = isQueryRegexValid(createPart1, createPart2, createPart3);
         }
     }
@@ -63,41 +70,40 @@ public class CreateStatement {
     }
 
     private boolean isQueryPartsValid(String part1, String part2, String part3) throws IOException {
-        String[] args = part1.split(",");
+        String argsString = part1.substring(part1.indexOf("(") + 1, part1.indexOf(")"));
+        String[] args = argsString.split(",");
         String tableName = part1.replace("CREATE TABLE '", "");
         tableName = tableName.substring(0, tableName.indexOf("'"));
-        String lineFormatRegex = part2.replace("line format /","");
-        lineFormatRegex.concat("///////");
-        lineFormatRegex = part2.replace("/:///////","");
+        part2 = part2.replace("line format /","");
+        part2 = part2.concat("///////");
+        part2 = part2.replace("/:///////","");
         String[] matches = Pattern.compile(csRegex.getGroupingRegex())
                 .matcher(part2)
                 .results()
                 .map(MatchResult::group)
                 .toArray(String[]::new);
         if(args.length != matches.length){
-            System.out.println(args);
-            System.out.println(matches);
             System.out.println("The amount of column names and regex are not equal. Did you put " +
                     "every regex in its own group?\n");
             return false;
         }
-        String filepath = part3.replace("file '", "");
-        filepath = part3.replace("';", "");
-        Path path = Paths.get(filepath);
+        part3 = part3.substring(6);
+        part3 = part3.replace("';", "");
+        Path path = Paths.get(part3);
         if(!(Files.exists(path) && Files.isRegularFile(path))){
             System.out.println("Given file does not exist. Please make sure file path is correct.\n");
             return false;
         }
-        BufferedReader fileReader = new BufferedReader(new FileReader(filepath));
+        BufferedReader fileReader = new BufferedReader(new FileReader(part3));
         String fileLine = null;
         while((fileLine = fileReader.readLine()) != null){
-            if(!Pattern.matches(lineFormatRegex, fileLine)){
+            if(!Pattern.matches(part2, fileLine)){
                 System.out.println("A line in the file does not match the provided regex.");
                 return false;
             }
         }
         if(uniqueTableName(tableName)){
-            createTableFile(lineFormatRegex, args, matches, tableName);
+            createTableFile(part2, args, matches, tableName);
             return true;
         }
         else{
@@ -107,15 +113,19 @@ public class CreateStatement {
     }
 
     private void createTableFile(String completeRegex, String[] columnNames, String[] columnRegexes, String tableName) throws IOException {
-        File tableFile = new File(tableName + ".txt");
+        File tableFile = new File("tables/" + tableName + ".txt");
         if (!tableFile.createNewFile()) {
             System.out.println("A table with this name already exists");
         } else {
-            FileWriter writer = new FileWriter(tableFile + ".txt");
+//            FileWriter writer = new FileWriter(tableFile);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tableFile, true));
             writer.write(tableFile.getAbsolutePath());
+            writer.newLine();
             writer.write(completeRegex);
+            writer.newLine();
             for(int i=0; i<columnNames.length; i++){
-                writer.write(columnNames[i] + " | " + columnRegexes[i]);
+                writer.write(columnNames[i] + ": " + columnRegexes[i]);
+                writer.newLine();
             }
             writer.close();
         }
@@ -131,3 +141,24 @@ public class CreateStatement {
         return true;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
