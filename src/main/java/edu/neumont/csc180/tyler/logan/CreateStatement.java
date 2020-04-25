@@ -4,26 +4,20 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 public class CreateStatement {
-//    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     Scanner reader = new Scanner(System.in);
     CreateStatementRegex csRegex = new CreateStatementRegex();
-    String createStatement;
     String createPart1;
     String createPart2;
     String createPart3;
     boolean validQuery;
-    int argCount;
 
     public void createQuery() throws IOException {
         validQuery = false;
-        argCount = 0;
-        createStatement = "";
         while(!validQuery){
             System.out.println("Format:");
             System.out.println("CREATE TABLE 'table' (arg1,arg2,arg3):");
@@ -117,7 +111,6 @@ public class CreateStatement {
         if (!tableFile.createNewFile()) {
             System.out.println("A table with this name already exists");
         } else {
-//            FileWriter writer = new FileWriter(tableFile);
             BufferedWriter writer = new BufferedWriter(new FileWriter(tableFile, true));
             writer.write(tableFile.getAbsolutePath());
             writer.newLine();
@@ -141,24 +134,3 @@ public class CreateStatement {
         return true;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
