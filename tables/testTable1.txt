@@ -1,4 +1,4 @@
-C:\Users\Logan Tyler\Desktop\Classes\Quarter 7\Open Source Platforms Dev\Regex Query Language\tables\testTable1.txt
+C:\Users\Logan Tyler\Desktop\Classes\Quarter 7\Open Source Platforms Dev\Regex Query Language\testFiles\1.txt
 ([A-Z][a-zA-Z]*) - ([a-zA-Z0-9]+)
 name: ([A-Z][a-zA-Z]*)
 col: ([a-zA-Z0-9]+)

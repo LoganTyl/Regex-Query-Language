@@ -20,8 +20,8 @@ public class CreateStatement {
         validQuery = false;
         while(!validQuery){
             System.out.println("Format:");
-            System.out.println("CREATE TABLE 'table' (arg1,arg2,arg3):");
-            System.out.println("line format /<regex with column name in its own regex group>/:");
+            System.out.println("CREATE TABLE 'table' (col1,col2,col3):");
+            System.out.println("line format /regex with column name in its own regex group/:");
             System.out.println("file 'filepath';\n");
             System.out.println("Enter your query OR type 'Quit' to go back to the menu:");
 //            createPart1 = reader.nextLine();
@@ -97,7 +97,7 @@ public class CreateStatement {
             }
         }
         if(uniqueTableName(tableName)){
-            createTableFile(part2, args, matches, tableName);
+            createTableFile(part2, args, matches, tableName, part3);
             return true;
         }
         else{
@@ -106,13 +106,14 @@ public class CreateStatement {
         }
     }
 
-    private void createTableFile(String completeRegex, String[] columnNames, String[] columnRegexes, String tableName) throws IOException {
+    private void createTableFile(String completeRegex, String[] columnNames, String[] columnRegexes, String tableName, String dataRef) throws IOException {
         File tableFile = new File("tables/" + tableName + ".txt");
         if (!tableFile.createNewFile()) {
             System.out.println("A table with this name already exists");
         } else {
             BufferedWriter writer = new BufferedWriter(new FileWriter(tableFile, true));
-            writer.write(tableFile.getAbsolutePath());
+            File dataFile = new File(dataRef);
+            writer.write(dataFile.getAbsolutePath());
             writer.newLine();
             writer.write(completeRegex);
             writer.newLine();
