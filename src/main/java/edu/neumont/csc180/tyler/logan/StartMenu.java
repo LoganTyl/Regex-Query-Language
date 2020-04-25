@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 public class StartMenu {
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     CreateStatement createStatement = new CreateStatement();
+    SelectStatement selectStatement = new SelectStatement();
 
     public void queryOption() throws IOException {
         while(true){
@@ -18,8 +19,7 @@ public class StartMenu {
                     createStatement.createQuery();
                     break;
                 case "1":
-                    //select query;
-                    System.out.println("Select Query");
+                    selectStatement.selectQuery();
                     break;
                 case "2":
                     System.exit(0);

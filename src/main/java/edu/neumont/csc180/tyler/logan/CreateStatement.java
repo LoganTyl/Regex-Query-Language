@@ -21,7 +21,7 @@ public class CreateStatement {
         while(!validQuery){
             System.out.println("Format:");
             System.out.println("CREATE TABLE 'table' (col1,col2,col3):");
-            System.out.println("line format /regex with column name in its own regex group/:");
+            System.out.println("line format /regex with column name in its own regex group; separated by semicolons/:");
             System.out.println("file 'filepath';\n");
             System.out.println("Enter your query OR type 'Quit' to go back to the menu:");
 //            createPart1 = reader.nextLine();
@@ -32,7 +32,7 @@ public class CreateStatement {
 //            createPart3 = reader.nextLine();
             String filler = reader.nextLine();
             createPart1 = "CREATE TABLE 'testTable1' (name,col):";
-            createPart2 = "line format /([A-Z][a-zA-Z]*) - ([a-zA-Z0-9]+)/:";
+            createPart2 = "line format /([A-Z][a-zA-Z]*);([a-zA-Z0-9]+)/:";
             createPart3 = "file 'C:\\Users\\Logan Tyler\\Desktop\\Classes\\Quarter 7\\Open Source Platforms Dev\\Regex Query Language\\testFiles\\1.txt';";
             validQuery = isQueryRegexValid(createPart1, createPart2, createPart3);
         }
@@ -97,7 +97,7 @@ public class CreateStatement {
             }
         }
         if(uniqueTableName(tableName)){
-            createTableFile(part2, args, matches, tableName, part3);
+            createTableFile(part2, args, tableName, part3);
             return true;
         }
         else{
@@ -106,7 +106,7 @@ public class CreateStatement {
         }
     }
 
-    private void createTableFile(String completeRegex, String[] columnNames, String[] columnRegexes, String tableName, String dataRef) throws IOException {
+    private void createTableFile(String completeRegex, String[] columnNames, String tableName, String dataRef) throws IOException {
         File tableFile = new File("tables/" + tableName + ".txt");
         if (!tableFile.createNewFile()) {
             System.out.println("A table with this name already exists");
@@ -118,8 +118,12 @@ public class CreateStatement {
             writer.write(completeRegex);
             writer.newLine();
             for(int i=0; i<columnNames.length; i++){
-                writer.write(columnNames[i] + ": " + columnRegexes[i]);
-                writer.newLine();
+                if(i==columnNames.length-1){
+                    writer.write(columnNames[i]);
+                }
+                else{
+                    writer.write(columnNames[i] + ",");
+                }
             }
             writer.close();
         }
